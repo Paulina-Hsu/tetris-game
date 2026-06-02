@@ -165,6 +165,18 @@ export default function App() {
         </aside>
       </div>
 
+      <section className="panel video-section">
+        <h2>遊戲展示影片</h2>
+        <video
+          className="video-demo"
+          controls
+          muted
+          playsInline
+          preload="metadata"
+          src="/videos/tetris-demo.mp4"
+        />
+      </section>
+
       {!hasStarted && <StartScreen onStart={startGame} highScore={highScore} />}
 
       <GameOverModal
