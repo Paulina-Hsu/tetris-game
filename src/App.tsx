@@ -5,17 +5,23 @@ import GameBoard from "./components/GameBoard";
 import GameOverModal from "./components/GameOverModal";
 import NextPiece from "./components/NextPiece";
 import ScorePanel from "./components/ScorePanel";
+import StartScreen from "./components/StartScreen";
 
 export default function App() {
   const {
     board,
     currentPiece,
+    ghostPiece,
     nextPiece,
     score,
+    highScore,
     lines,
     level,
     isPaused,
     isGameOver,
+    hasStarted,
+    isNewRecord,
+    startGame,
     moveLeft,
     moveRight,
     rotate,
@@ -29,12 +35,25 @@ export default function App() {
     (event: KeyboardEvent) => {
       if (
         event.code === "Space" ||
+        event.code === "Enter" ||
         event.code === "ArrowLeft" ||
         event.code === "ArrowRight" ||
         event.code === "ArrowDown" ||
         event.code === "ArrowUp"
       ) {
         event.preventDefault();
+      }
+
+      if (event.code === "Enter") {
+        if (!hasStarted) {
+          startGame();
+          return;
+        }
+
+        if (isGameOver) {
+          restart();
+          return;
+        }
       }
 
       switch (event.code) {
@@ -63,7 +82,18 @@ export default function App() {
           break;
       }
     },
-    [hardDrop, moveLeft, moveRight, rotate, softDrop, restart, togglePause]
+    [
+      hardDrop,
+      hasStarted,
+      isGameOver,
+      moveLeft,
+      moveRight,
+      restart,
+      rotate,
+      softDrop,
+      startGame,
+      togglePause
+    ]
   );
 
   useEffect(() => {
@@ -77,13 +107,18 @@ export default function App() {
         <section className="game-zone panel">
           <header className="title-row">
             <h1>Tetris Game</h1>
-            <p>俄羅斯方塊小遊戲</p>
+            <p>Clear lines, chase records, and use the ghost piece to land cleanly.</p>
           </header>
 
-          <GameBoard board={board} currentPiece={currentPiece} isPaused={isPaused} />
+          <GameBoard
+            board={board}
+            currentPiece={currentPiece}
+            ghostPiece={ghostPiece}
+            isPaused={isPaused}
+          />
 
           <div className="mobile-controls control-section">
-            <h2>控制按鈕</h2>
+            <h2>Touch Controls</h2>
             <ControlButtons
               onMoveLeft={moveLeft}
               onMoveRight={moveRight}
@@ -97,11 +132,11 @@ export default function App() {
         </section>
 
         <aside className="side-zone">
-          <ScorePanel score={score} lines={lines} level={level} />
+          <ScorePanel score={score} highScore={highScore} lines={lines} level={level} />
           <NextPiece piece={nextPiece} />
 
-          <div className="panel control-section">
-            <h2>控制按鈕</h2>
+          <div className="panel control-section desktop-controls">
+            <h2>Controls</h2>
             <ControlButtons
               onMoveLeft={moveLeft}
               onMoveRight={moveRight}
@@ -114,25 +149,29 @@ export default function App() {
           </div>
 
           <div className="panel instructions">
-            <h2>操作說明</h2>
+            <h2>Keyboard</h2>
             <ul>
-              <li>← 向左</li>
-              <li>→ 向右</li>
-              <li>↑ 旋轉</li>
-              <li>↓ 加速下降</li>
-              <li>Space 直接落下</li>
-              <li>P 暫停 / 繼續</li>
-              <li>R 重新開始</li>
+              <li>Enter starts the game</li>
+              <li>Left / Right moves the piece</li>
+              <li>Up rotates</li>
+              <li>Down soft drops</li>
+              <li>Space hard drops to the ghost piece</li>
+              <li>P pauses or resumes</li>
+              <li>R restarts</li>
             </ul>
           </div>
         </aside>
       </div>
 
+      {!hasStarted && <StartScreen onStart={startGame} />}
+
       <GameOverModal
         isOpen={isGameOver}
         score={score}
+        highScore={highScore}
         lines={lines}
         level={level}
+        isNewRecord={isNewRecord}
         onRestart={restart}
       />
     </div>

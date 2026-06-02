@@ -20,6 +20,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   color: var(--text-main);
   font-family: "Trebuchet MS", "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
   background: radial-gradient(circle at 20% 10%, #13234f 0%, transparent 45%),
@@ -33,7 +34,8 @@ body {
 
 .tetris-app {
   min-height: 100vh;
-  width: min(1200px, 96vw);
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 24px 12px;
 }
@@ -81,7 +83,7 @@ body {
 }
 
 .game-board {
-  width: min(380px, 90vw);
+  width: min(380px, 100%);
   aspect-ratio: 1 / 2;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -109,6 +111,18 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
+.board-cell.ghost {
+  opacity: 0.28;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.42) 0,
+    rgba(255, 255, 255, 0.42) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+
 .pause-overlay {
   position: absolute;
   inset: 0;
@@ -130,13 +144,14 @@ body {
 .control-buttons {
   display: grid;
   grid-template-columns: repeat(2, minmax(90px, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .control-buttons button,
 .modal-card button,
 .restart-button {
   padding: 10px;
+  min-height: 46px;
   font-size: 0.9rem;
   border: 1px solid transparent;
   border-radius: 10px;
@@ -156,9 +171,10 @@ body {
 
 .control-buttons button:active,
 .modal-card button:active,
+.start-card button:active,
 .restart-button:active {
-  transform: translateY(0);
-  opacity: 0.9;
+  transform: translateY(1px) scale(0.98);
+  opacity: 0.92;
 }
 
 .side-zone h2,
@@ -222,7 +238,8 @@ body {
   display: none;
 }
 
-.modal-backdrop {
+.modal-backdrop,
+.start-screen {
   position: fixed;
   inset: 0;
   background: rgba(3, 8, 18, 0.62);
@@ -232,8 +249,9 @@ body {
   z-index: 20;
 }
 
-.modal-card {
-  width: min(320px, 90vw);
+.modal-card,
+.start-card {
+  width: min(380px, 90vw);
   border-radius: 16px;
   border: 1px solid var(--panel-stroke);
   background: linear-gradient(165deg, #0c1a34, #081427);
@@ -242,31 +260,86 @@ body {
   box-shadow: 0 12px 40px rgba(1, 6, 15, 0.6);
 }
 
-.modal-card h2 {
-  margin: 0 0 10px;
+.modal-kicker {
+  margin: 0 0 6px;
+  color: #9ee7ff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.modal-card p {
+.modal-card h2,
+.start-card h2 {
+  margin: 0 0 10px;
+  font-size: clamp(1.8rem, 8vw, 2.4rem);
+}
+
+.modal-card p,
+.start-card p {
   color: var(--text-soft);
 }
 
-.modal-stats p {
+.keyboard-hint {
+  margin-top: 8px;
   color: #dbeafe;
-  margin: 6px 0;
+  font-weight: 700;
 }
 
-.modal-card button {
+.modal-stats {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.modal-stats p {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: #dbeafe;
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.modal-stats strong {
+  color: #9ee7ff;
+}
+
+.modal-card button,
+.start-card button {
   width: 100%;
   margin-top: 12px;
+  min-height: 48px;
+  border: 0;
+  border-radius: 10px;
+  color: #f8fafc;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 800;
+  background: linear-gradient(140deg, var(--accent-2), var(--accent));
+  box-shadow: 0 10px 26px rgba(0, 210, 255, 0.24);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.modal-card button:hover,
+.start-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 210, 255, 0.32);
 }
 
 @media (max-width: 900px) {
+  .tetris-app {
+    padding: 12px 8px;
+  }
+
   .layout {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .game-board {
-    width: min(360px, 95vw);
+    width: min(360px, 100%);
   }
 
   .game-zone {
@@ -277,11 +350,51 @@ body {
     display: block;
   }
 
+  .desktop-controls {
+    display: none;
+  }
+
   .side-zone {
     width: 100%;
   }
 
   .control-section h2 {
     text-align: center;
+  }
+
+  .control-buttons {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .control-buttons button {
+    min-height: 54px;
+    padding: 12px 8px;
+    font-size: 0.95rem;
+    font-weight: 800;
+  }
+}
+
+@media (max-width: 420px) {
+  .panel {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .game-board-wrapper {
+    padding: 8px;
+  }
+
+  .game-board {
+    width: min(340px, 100%);
+  }
+
+  .control-buttons {
+    gap: 10px;
+  }
+
+  .control-buttons button {
+    min-height: 52px;
+    font-size: 0.88rem;
   }
 }

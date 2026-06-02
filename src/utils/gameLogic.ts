@@ -62,6 +62,23 @@ export function placePiece(
   return nextBoard;
 }
 
+export function getGhostPiecePosition(
+  board: Board,
+  matrix: number[][],
+  position: BoardPosition
+): BoardPosition {
+  let ghostY = position.y;
+
+  while (canPlacePiece(board, matrix, { x: position.x, y: ghostY + 1 })) {
+    ghostY += 1;
+  }
+
+  return {
+    x: position.x,
+    y: ghostY
+  };
+}
+
 export function clearLines(board: Board): LineClearResult {
   const remainRows = board.filter((row) => row.some((cell) => cell !== EMPTY_CELL));
   const cleared = BOARD_HEIGHT - remainRows.length;

@@ -7,8 +7,8 @@ interface NextPieceProps {
 export default function NextPiece({ piece }: NextPieceProps) {
   return (
     <div className="panel">
-      <h2>下一個方塊</h2>
-      <div className="next-piece">
+      <h2>Next Piece</h2>
+      <div className="next-piece" aria-label={`Next piece ${piece.type}`}>
         {piece.matrix.map((row, rowIndex) => (
           <div key={rowIndex} className="next-row">
             {row.map((cell, colIndex) => (

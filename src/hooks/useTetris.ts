@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BOARD_WIDTH, Board, createEmptyBoard } from "../utils/board";
 import {
   BoardPosition,
   clearLines,
   canPlacePiece,
+  getGhostPiecePosition,
   placePiece,
   rotateMatrix
 } from "../utils/gameLogic";
 import { Tetromino, getRandomTetromino } from "../utils/pieces";
+import { readHighScore, saveHighScore } from "../utils/storage";
 
 export interface ActivePiece extends Tetromino {
   x: number;
@@ -34,10 +36,13 @@ export function useTetris() {
   const [currentPiece, setCurrentPiece] = useState<ActivePiece | null>(null);
   const [nextPiece, setNextPiece] = useState<Tetromino>(getRandomTetromino);
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(readHighScore);
   const [lines, setLines] = useState(0);
   const [level, setLevel] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [isNewRecord, setIsNewRecord] = useState(false);
 
   const spawnInitialPiece = useCallback((piece: Tetromino): ActivePiece => {
     return {
@@ -65,7 +70,25 @@ export function useTetris() {
     setLevel(1);
     setIsPaused(false);
     setIsGameOver(!canSpawn);
+    setHasStarted(true);
+    setIsNewRecord(false);
   }, [spawnInitialPiece]);
+
+  const ghostPiece = useMemo<ActivePiece | null>(() => {
+    if (!currentPiece) {
+      return null;
+    }
+
+    const ghostPosition = getGhostPiecePosition(board, currentPiece.matrix, {
+      x: currentPiece.x,
+      y: currentPiece.y
+    });
+
+    return {
+      ...currentPiece,
+      y: ghostPosition.y
+    };
+  }, [board, currentPiece]);
 
   const lockCurrentPiece = useCallback(
     (piece: ActivePiece) => {
@@ -74,6 +97,7 @@ export function useTetris() {
       const merged = placePiece(board, piece.matrix, { x: piece.x, y: piece.y }, piece.color);
       const { board: compactBoard, lines: clearedCount } = clearLines(merged);
       const addScore = SCORE_TABLE[clearedCount] ?? 0;
+      const nextScore = score + addScore;
       const nextLines = lines + clearedCount;
       const nextLevel = Math.floor(nextLines / 10) + 1;
 
@@ -86,14 +110,14 @@ export function useTetris() {
       });
 
       setBoard(compactBoard);
-      setScore((prev) => prev + addScore);
+      setScore(nextScore);
       setLines(nextLines);
       setLevel(nextLevel);
       setNextPiece(nextQueued);
       setCurrentPiece(canSpawn ? spawned : null);
       setIsGameOver(!canSpawn);
     },
-    [board, lines, nextPiece, spawnInitialPiece]
+    [board, lines, nextPiece, score, spawnInitialPiece]
   );
 
   const moveDown = useCallback(() => {
@@ -156,49 +180,59 @@ export function useTetris() {
   }, [moveDown]);
 
   const hardDrop = useCallback(() => {
-    if (!currentPiece || isPaused || isGameOver) return;
-
-    let dropY = currentPiece.y;
-    while (canPlacePiece(board, currentPiece.matrix, { x: currentPiece.x, y: dropY + 1 })) {
-      dropY += 1;
-    }
+    if (!currentPiece || isPaused || isGameOver || !ghostPiece) return;
 
     const landed: ActivePiece = {
       ...currentPiece,
-      y: dropY
+      y: ghostPiece.y
     };
     lockCurrentPiece(landed);
-  }, [board, currentPiece, isPaused, isGameOver, lockCurrentPiece]);
+  }, [currentPiece, ghostPiece, isPaused, isGameOver, lockCurrentPiece]);
 
   const togglePause = useCallback(() => {
-    if (isGameOver) return;
+    if (isGameOver || !hasStarted) return;
     setIsPaused((prev) => !prev);
-  }, [isGameOver]);
+  }, [hasStarted, isGameOver]);
 
   const restart = useCallback(() => {
     startGame();
   }, [startGame]);
 
   useEffect(() => {
+    if (!hasStarted || isGameOver || isPaused) {
+      return;
+    }
+
     const timerId = window.setInterval(() => {
       moveDown();
     }, getDropInterval(level));
     return () => window.clearInterval(timerId);
-  }, [level, moveDown]);
+  }, [hasStarted, isGameOver, isPaused, level, moveDown]);
 
   useEffect(() => {
-    startGame();
-  }, [startGame]);
+    if (score <= highScore) {
+      return;
+    }
+
+    setHighScore(score);
+    saveHighScore(score);
+    setIsNewRecord(true);
+  }, [highScore, score]);
 
   return {
     board,
     currentPiece,
+    ghostPiece,
     nextPiece,
     score,
+    highScore,
     lines,
     level,
     isPaused,
     isGameOver,
+    hasStarted,
+    isNewRecord,
+    startGame,
     moveLeft,
     moveRight,
     rotate,
