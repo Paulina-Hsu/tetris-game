@@ -3,9 +3,11 @@ import { useTetris } from "./hooks/useTetris";
 import ControlButtons from "./components/ControlButtons";
 import GameBoard from "./components/GameBoard";
 import GameOverModal from "./components/GameOverModal";
+import MusicToggle from "./components/MusicToggle";
 import NextPiece from "./components/NextPiece";
 import ScorePanel from "./components/ScorePanel";
 import StartScreen from "./components/StartScreen";
+import useBackgroundMusic from "./hooks/useBackgroundMusic";
 
 export default function App() {
   const {
@@ -30,6 +32,7 @@ export default function App() {
     togglePause,
     restart
   } = useTetris();
+  const { isPlaying, toggleMusic } = useBackgroundMusic();
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -129,6 +132,7 @@ export default function App() {
               onRestart={restart}
               disabled={!hasStarted}
             />
+            <MusicToggle isPlaying={isPlaying} onToggle={toggleMusic} />
           </div>
         </section>
 
@@ -148,6 +152,7 @@ export default function App() {
               onRestart={restart}
               disabled={!hasStarted}
             />
+            <MusicToggle isPlaying={isPlaying} onToggle={toggleMusic} />
           </div>
 
           <div className="panel instructions">

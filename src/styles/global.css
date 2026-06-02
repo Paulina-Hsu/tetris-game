@@ -166,6 +166,26 @@ body {
   touch-action: manipulation;
 }
 
+.music-toggle-wrap {
+  margin-top: 12px;
+}
+
+.music-toggle {
+  width: 100%;
+  padding: 10px;
+  min-height: 46px;
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #f8fafc;
+  background: linear-gradient(140deg, var(--accent-2), var(--accent));
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 8px 20px rgba(0, 210, 255, 0.18);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 .control-buttons button:disabled {
   cursor: not-allowed;
   opacity: 0.45;
@@ -173,12 +193,16 @@ body {
 
 .control-buttons button:hover,
 .modal-card button:hover,
-.restart-button:hover {
+.restart-button:hover,
+.music-toggle:hover,
+.music-toggle:focus-visible {
+  outline: none;
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(0, 210, 255, 0.28);
 }
 
 .control-buttons button:active,
+.music-toggle:active,
 .modal-card button:active,
 .start-card button:active,
 .restart-button:active {
