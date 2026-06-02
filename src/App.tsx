@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+﻿import { useCallback, useEffect } from "react";
 import { useTetris } from "./hooks/useTetris";
 import ControlButtons from "./components/ControlButtons";
 import GameBoard from "./components/GameBoard";
@@ -32,6 +32,7 @@ export default function App() {
     togglePause,
     restart
   } = useTetris();
+
   const { isPlaying, toggleMusic } = useBackgroundMusic();
 
   const handleKeyDown = useCallback(
@@ -110,7 +111,7 @@ export default function App() {
         <section className="game-zone panel">
           <header className="title-row">
             <h1>Tetris Game</h1>
-            <p>俄羅斯方塊小遊戲｜陰影預判落點、排行榜與高分挑戰</p>
+            <p>用鍵盤控制，體驗標準俄羅斯方塊玩法。</p>
           </header>
 
           <GameBoard
@@ -158,29 +159,18 @@ export default function App() {
           <div className="panel instructions">
             <h2>操作說明</h2>
             <ul>
-              <li>Enter：開始遊戲</li>
-              <li>方向左/右：移動方塊</li>
-              <li>方向上：旋轉方塊</li>
-              <li>方向下：加速下降</li>
-              <li>空白鍵：直接落到底</li>
-              <li>P：暫停 / 繼續</li>
-              <li>R：重新開始</li>
+              <li>Enter: 開始 / 重新開始</li>
+              <li>←: 左移</li>
+              <li>→: 右移</li>
+              <li>↑: 旋轉</li>
+              <li>↓: 加速下降</li>
+              <li>Space: 直接落下</li>
+              <li>P: 暫停 / 繼續</li>
+              <li>R: 重開</li>
             </ul>
           </div>
         </aside>
       </div>
-
-      <section className="panel video-section">
-        <h2>遊戲展示影片</h2>
-        <video
-          className="video-demo"
-          controls
-          muted
-          playsInline
-          preload="metadata"
-          src="/videos/tetris-demo.mp4"
-        />
-      </section>
 
       {!hasStarted && <StartScreen onStart={startGame} highScore={highScore} />}
 
