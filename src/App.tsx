@@ -107,7 +107,7 @@ export default function App() {
         <section className="game-zone panel">
           <header className="title-row">
             <h1>Tetris Game</h1>
-            <p>Clear lines, chase records, and use the ghost piece to land cleanly.</p>
+            <p>俄羅斯方塊小遊戲｜陰影預判落點、排行榜與高分挑戰</p>
           </header>
 
           <GameBoard
@@ -118,7 +118,7 @@ export default function App() {
           />
 
           <div className="mobile-controls control-section">
-            <h2>Touch Controls</h2>
+            <h2>手機操作</h2>
             <ControlButtons
               onMoveLeft={moveLeft}
               onMoveRight={moveRight}
@@ -127,6 +127,7 @@ export default function App() {
               onHardDrop={hardDrop}
               onPause={togglePause}
               onRestart={restart}
+              disabled={!hasStarted}
             />
           </div>
         </section>
@@ -136,7 +137,7 @@ export default function App() {
           <NextPiece piece={nextPiece} />
 
           <div className="panel control-section desktop-controls">
-            <h2>Controls</h2>
+            <h2>控制按鈕</h2>
             <ControlButtons
               onMoveLeft={moveLeft}
               onMoveRight={moveRight}
@@ -145,25 +146,26 @@ export default function App() {
               onHardDrop={hardDrop}
               onPause={togglePause}
               onRestart={restart}
+              disabled={!hasStarted}
             />
           </div>
 
           <div className="panel instructions">
-            <h2>Keyboard</h2>
+            <h2>操作說明</h2>
             <ul>
-              <li>Enter starts the game</li>
-              <li>Left / Right moves the piece</li>
-              <li>Up rotates</li>
-              <li>Down soft drops</li>
-              <li>Space hard drops to the ghost piece</li>
-              <li>P pauses or resumes</li>
-              <li>R restarts</li>
+              <li>Enter：開始遊戲</li>
+              <li>方向左/右：移動方塊</li>
+              <li>方向上：旋轉方塊</li>
+              <li>方向下：加速下降</li>
+              <li>空白鍵：直接落到底</li>
+              <li>P：暫停 / 繼續</li>
+              <li>R：重新開始</li>
             </ul>
           </div>
         </aside>
       </div>
 
-      {!hasStarted && <StartScreen onStart={startGame} />}
+      {!hasStarted && <StartScreen onStart={startGame} highScore={highScore} />}
 
       <GameOverModal
         isOpen={isGameOver}

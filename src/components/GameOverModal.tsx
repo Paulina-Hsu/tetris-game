@@ -22,28 +22,28 @@ export default function GameOverModal({
   return (
     <div className="modal-backdrop">
       <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
-        <p className="modal-kicker">{isNewRecord ? "New Record!" : "Try Again"}</p>
+        <p className="modal-kicker">{isNewRecord ? "New Record!" : "本局結束"}</p>
         <h2 id="game-over-title">Game Over</h2>
         <div className="modal-stats">
           <p>
-            <span>Score</span>
+            <span>本局分數</span>
             <strong>{score}</strong>
           </p>
           <p>
-            <span>High Score</span>
+            <span>最高分</span>
             <strong>{highScore}</strong>
           </p>
           <p>
-            <span>Cleared Lines</span>
+            <span>消除行數</span>
             <strong>{lines}</strong>
           </p>
           <p>
-            <span>Level</span>
+            <span>等級</span>
             <strong>{level}</strong>
           </p>
         </div>
         <button type="button" onClick={onRestart}>
-          Restart
+          重新開始
         </button>
       </div>
     </div>

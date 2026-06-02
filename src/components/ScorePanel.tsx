@@ -8,15 +8,15 @@ interface ScorePanelProps {
 export default function ScorePanel({ score, highScore, lines, level }: ScorePanelProps) {
   return (
     <div className="panel">
-      <h2>Score</h2>
+      <h2>分數</h2>
       <div className="stat-grid">
-        <p>Current Score</p>
+        <p>本局分數</p>
         <p className="stat-value">{score}</p>
-        <p>High Score</p>
+        <p>最高分</p>
         <p className="stat-value">{highScore}</p>
-        <p>Level</p>
+        <p>等級</p>
         <p className="stat-value">{level}</p>
-        <p>Cleared Lines</p>
+        <p>消除行數</p>
         <p className="stat-value">{lines}</p>
       </div>
     </div>

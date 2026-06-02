@@ -80,7 +80,7 @@ export default function ControlButtons({
       >
         右移
       </button>
-      <button type="button" onPointerDown={onRotate} aria-label="Rotate">
+      <button type="button" onPointerDown={onRotate} aria-label="Rotate" disabled={disabled}>
         旋轉
       </button>
       <button
@@ -94,13 +94,34 @@ export default function ControlButtons({
       >
         下降
       </button>
-      <button type="button" onPointerDown={onHardDrop} onPointerUp={onPointerEnd} onPointerCancel={onPointerEnd} aria-label="Hard drop" disabled={disabled}>
+      <button
+        type="button"
+        onPointerDown={onHardDrop}
+        onPointerUp={onPointerEnd}
+        onPointerCancel={onPointerEnd}
+        aria-label="Hard drop"
+        disabled={disabled}
+      >
         直接落下
       </button>
-      <button type="button" onPointerDown={onPause} onPointerUp={onPointerEnd} onPointerCancel={onPointerEnd} aria-label="Pause or resume" disabled={disabled}>
+      <button
+        type="button"
+        onPointerDown={onPause}
+        onPointerUp={onPointerEnd}
+        onPointerCancel={onPointerEnd}
+        aria-label="Pause or resume"
+        disabled={disabled}
+      >
         暫停
       </button>
-      <button type="button" onPointerDown={onRestart} onPointerUp={onPointerEnd} onPointerCancel={onPointerEnd} aria-label="Restart game" disabled={disabled}>
+      <button
+        type="button"
+        onPointerDown={onRestart}
+        onPointerUp={onPointerEnd}
+        onPointerCancel={onPointerEnd}
+        aria-label="Restart game"
+        disabled={disabled}
+      >
         重新開始
       </button>
     </div>
